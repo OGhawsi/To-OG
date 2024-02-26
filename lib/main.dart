@@ -59,7 +59,6 @@ class ToDo {
   bool checked;
   String todoItem;
   ToDo({required this.checked, required this.todoItem});
-
   bool get getChecked {
     return checked;
   }
@@ -79,7 +78,10 @@ class HomePage extends StatelessWidget {
         title: Text('TO DO APP'),
       ),
       backgroundColor: Colors.grey.shade100,
-      body: AllSections(),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: AllSections(),
+      ),
     );
   }
 }
@@ -91,11 +93,28 @@ class AllSections extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        AddNewItem(),
+        Expanded(child: ToDos()),
+      ],
+    );
+  }
+}
+
+class AddNewItem extends StatelessWidget {
+  const AddNewItem({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        TextField(),
+        SizedBox(
+          height: 10,
+        ),
         ElevatedButton(
           onPressed: () => (),
-          child: Text('Press me'),
-        ),
-        Expanded(child: ToDos()),
+          child: Text('Add ToDo!'),
+        )
       ],
     );
   }

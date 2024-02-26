@@ -10,33 +10,62 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        useMaterial3: true,
+    return ChangeNotifierProvider(
+      create: (context) => MyAppState(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          useMaterial3: true,
 
-        // Define the default brightness and colors.
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.orange,
-          // ···
-          brightness: Brightness.light,
-        ),
+          // Define the default brightness and colors.
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.orange,
+            // ···
+            brightness: Brightness.light,
+          ),
 
-        // Define the default `TextTheme`. Use this to specify the default
-        // text styling for headlines, titles, bodies of text, and more.
-        textTheme: TextTheme(
-          displayLarge: const TextStyle(
-            fontSize: 72,
-            fontWeight: FontWeight.bold,
-          ),
-          // ···
-          titleLarge: TextStyle(
-            fontSize: 30,
-            fontStyle: FontStyle.italic,
+          // Define the default `TextTheme`. Use this to specify the default
+          // text styling for headlines, titles, bodies of text, and more.
+          textTheme: TextTheme(
+            displayLarge: const TextStyle(
+              fontSize: 72,
+              fontWeight: FontWeight.bold,
+            ),
+            // ···
+            titleLarge: TextStyle(
+              fontSize: 30,
+              fontStyle: FontStyle.italic,
+            ),
           ),
         ),
+        home: HomePage(),
       ),
-      home: HomePage(),
     );
+  }
+}
+
+class MyAppState extends ChangeNotifier {
+  List<ToDo> allToDos = [
+    ToDo(checked: true, todoItem: 'Go to gym'),
+    ToDo(checked: false, todoItem: 'Go to office'),
+    ToDo(checked: true, todoItem: 'Go to home'),
+  ];
+
+  @override
+  notifyListeners();
+}
+
+class ToDo {
+  bool checked;
+  String todoItem;
+  ToDo({required this.checked, required this.todoItem});
+
+  bool get getChecked {
+    return checked;
+  }
+
+  String get getToDoItem {
+    return todoItem;
   }
 }
 
@@ -50,7 +79,24 @@ class HomePage extends StatelessWidget {
         title: Text('TO DO APP'),
       ),
       backgroundColor: Colors.grey.shade100,
-      body: ToDos(),
+      body: AllSections(),
+    );
+  }
+}
+
+class AllSections extends StatelessWidget {
+  const AllSections({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        ElevatedButton(
+          onPressed: () => (),
+          child: Text('Press me'),
+        ),
+        Expanded(child: ToDos()),
+      ],
     );
   }
 }
@@ -60,47 +106,21 @@ class ToDos extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ToDo(
-          checked: true,
-          todoItem: 'Go to gym',
-        ),
-        ToDo(
-          checked: false,
-          todoItem: 'Go to work',
-        ),
-        ToDo(
-          checked: true,
-          todoItem: 'Go to office',
-        ),
-        ToDo(
-          checked: false,
-          todoItem: 'Go to market',
-        ),
-        ToDo(
-          checked: true,
-          todoItem: 'Go to home',
-        ),
-      ],
-    );
-  }
-}
-
-// ignore: must_be_immutable
-class ToDo extends StatelessWidget {
-  ToDo({super.key, required this.checked, required this.todoItem});
-
-  bool checked;
-  String todoItem;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Checkbox(value: checked, onChanged: null),
-        Text(todoItem),
-      ],
+    var appState = context.watch<MyAppState>();
+    return ListView.builder(
+      itemCount: appState.allToDos.length,
+      itemBuilder: (context, index) {
+        final singlTodo = appState.allToDos[index];
+        return Row(
+          children: [
+            Checkbox(
+              value: singlTodo.getChecked,
+              onChanged: null,
+            ),
+            Text(singlTodo.getToDoItem),
+          ],
+        );
+      },
     );
   }
 }
